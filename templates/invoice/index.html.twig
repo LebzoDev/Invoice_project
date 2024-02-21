@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+ {# the data-index attribute is required for the JavaScript code below #}
+
+    <div class="container">
+     <h1>Create new Invoice</h1>
+     {{ form_start(form) }}
+    <div class="mb-3">
+         {{ form_row(form.invoiceDate, {'attr': {'type':"date",'class': "form-control",'placeholder':"Ex:12/12/2022"},
+          'label':'Invoice date',
+          'label_attr': {'class': 'form-label'}
+            }) }}
+    </div>
+    <div class="mb-3">
+         {{ form_row(form.invoiceNumber, {'attr': {'class': "form-control",'placeholder':"Ex:34523"},
+          'label':'Invoice number',
+          'label_attr': {'class': 'form-label'}
+            }) }}
+    </div>
+    <div class="mb-3">
+         {{ form_row(form.customerId, {'attr': {'class': "form-control",'placeholder':"Give the id of the customer"},
+          'label':'Customer id',
+          'label_attr': {'class': 'form-label'}
+            }) }}
+
+    
+    <button class="my-3 btn btn-primary add_item_link" type="button" class="add_item_link" data-collection-holder-class="lines">Add new line</button>
+       <div class="card">
+        <div class="card-header">
+            Lines
+        </div>
+        <div class="card-body row">
+        <ul class="lines"
+                data-index="{{ form.invoiceLines|length > 0 ? form.invoiceLines|last.vars.name + 1 : 0 }}"
+                data-prototype="{{ form_widget(form.invoiceLines.vars.prototype)|e('html_attr') }}"
+            ></ul>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2 w-100 mx-auto">Save Invoice</button>
+     {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+
+ {% block javascript %}
+            <script>
+            window.addEventListener('load', function () {
+                const addFormToCollection = (e) => {
+               
+                const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+                console.log(collectionHolder);
+
+                const item = document.createElement('div');
+                //item.classList.add('col-auto');
+
+                item.innerHTML = collectionHolder
+                    .dataset
+                    .prototype
+                    .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                    );
+
+                collectionHolder.appendChild(item);
+
+                collectionHolder.dataset.index++;
+
+                 addTagFormDeleteLink(item);
+                };
+
+                const addTagFormDeleteLink = (item) => {
+                    const removeFormButton = document.createElement('button');
+                    removeFormButton.classList.add('btn', 'btn-danger','my-2');
+                    removeFormButton.innerText = 'Delete this line';
+
+                    item.append(removeFormButton);
+
+                    removeFormButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        // remove the li for the tag form
+                        item.remove();
+                    });
+                }
+
+                 document
+                    .querySelectorAll('.add_item_link')
+                    .forEach(btn => {
+                        btn.addEventListener("click", addFormToCollection)
+                    });
+                
+                document
+                    .querySelectorAll('ul.lines li')
+                    .forEach((tag) => {
+                        addTagFormDeleteLink(tag)
+                    })
+
+        
+            });
+           </script>
+    {% endblock %}

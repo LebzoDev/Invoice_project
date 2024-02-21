@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Liste Invoices</h1>
+    <section style="width:80%;margin:0 auto;">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Number</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Date</th>
+                     <th scope="col">Edit</th>
+                      <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr {% for invoice in invoices  %}>
+                    <th scope="row">1</th>
+                    <td>{{ invoice.invoiceNumber }}</td>
+                    <td>{{ invoice.customerId }}</td>
+                    <td>{{ invoice.invoiceDate | date("m/d/Y") }}</td>
+                    <td><a href="{{ path('invoice_edit', {'id': invoice.id}) }}">Edit</a></td>
+                    <td><a href="{{ path('invoice_delete', {'id': invoice.id}) }}">Delete</a></td>
+                    </tr {% endfor %} >
+                </tbody>
+        </table>
+    </section>
+{% endblock %}
